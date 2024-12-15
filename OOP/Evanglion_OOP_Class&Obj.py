@@ -19,21 +19,23 @@ def main():
         eva = Evangelion(unit, pilot)
         list_eva.append(eva)
 
-        retry = input("Input data lain? [Y/T] : ")
-        print()
-        if retry.lower() == 'y':
-            print("Dimengerti.")
-            print()
-
-        elif retry.lower() == 't':
-            print("Please wait...")
-            break
-        else:
-            print("INVALID! Choose Y/T!")
-            print()
-        
         print ("===== DATA UNIT EVA =====")
         for eva in list_eva:
             eva.pilot_information()
+            print()
+
+        while True:
+            retry = input("Input data lain? [Y/T] : ")
+            print()
+            if retry.lower() == 'y':
+                print("Dimengerti.")
+                print()
+                break
+            elif retry.lower() == 't':
+                print("Please wait...")
+                exit()
+            else:
+                print("INVALID! Choose Y/T!")
+                print()
 
 main()
