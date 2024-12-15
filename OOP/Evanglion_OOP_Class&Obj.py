@@ -29,17 +29,31 @@ def main():
 
         elif pilihan == '2':
             while True:
-                eva_data = input("Masukkan Data Pilot (Format Penulisan : EVA-XX, Nama Pilot) : ")
-                print()
                 try:
+                    eva_data = input("Masukkan Data Pilot (Format Penulisan : EVA-XX, Nama Pilot) : ")
+                    print()
+                    #Buat ngecek ada tanda koma apa nggak saat inputan sebelumnya
+                    if ',' not in eva_data:
+                        #raise buat bikin error secara manual untuk kondisi tertentu
+                        raise ValueError("Format input harus menggunakan tanda koma (,)!")
+
                     eva_data_entries = eva_data.split(',')
                     unit = eva_data_entries[0].strip()
                     pilot = eva_data_entries[1].strip()
+
+                    if not unit or not pilot:
+                        raise ValueError("Unit dan Nama Pilot tidak boleh kosong!")
+
                     list_eva.append(Evangelion(unit, pilot))
                     break
                 
+                #keyword except dipake buat nangkep pesan error terus diubah pesannya supaya lebih friendly
+                except ValueError as e:
+                    print (f"Error: {e}, Gunakan Format EVA-XX, Nama Pilot!")
+                    print()
+                
                 except IndexError:
-                    print ("Format Penulisan Salah! Gunakan Format EVA-XX, Nama Pilot!")
+                    print ("Error: Format Input Salah! Gunakan Format EVA-XX, Nama Pilot!")
                     print()
 
         else:
