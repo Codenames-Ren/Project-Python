@@ -14,9 +14,18 @@ class Player:
             return 
         
         print (f"Data Player di Level {level} : ")
-        waktu = int(input("Lama Waktu bermain (satuan menit) : "))
-        item = int(input("Jumlah item yang didapatkan : "))
-        print()
+        while True:
+            try:
+                waktu = int(input("Lama Waktu bermain (satuan menit) : "))
+                item = int(input("Jumlah item yang didapatkan : "))
+                if waktu <= 1 and item >= 0:
+                    raise ValueError("Waktu tidak boleh kurang dari 1")
+                print()
+                break
+            except ValueError as e:
+                print (f"Error: {e}, Gunakan angka untuk menginput Waktu dan Item!")
+                print()
+
         self.total_waktu += waktu
         self.total_item += item
 
@@ -30,12 +39,41 @@ class Player:
         print (f"Total Item yang didapat     : {self.total_item} item")
         print (f"Level yang berhasil dicapai : {self.level_tertinggi}")
 
-print ("=====DATA PLAYER=====")
-nama_player = input("Nama Player : ")
-level_tertinggi = int(input("Level saat ini : "))
+def main():
+    while True:
+        print ("=====DATA PLAYER=====")
+        nama_player = input("Nama Player : ")
+        while True:
+            try:
+                level_tertinggi = int(input("Level saat ini : "))
+                if level_tertinggi < 1:
+                    raise ValueError("Level tidak boleh kurang dari 1!")
+                print()
+                break
+            except ValueError as e:
+                print (f"Error: {e}, Gunakan angka untuk menginput level!")
+                print()
 
-#bikin object Player
-player = Player(nama_player)
-player.level_tertinggi = level_tertinggi
-player.data_player(1)
-player.informasi_player()
+        #bikin object Player
+        player = Player(nama_player)
+        player.level_tertinggi = level_tertinggi
+        player.data_player(1)
+        player.informasi_player()
+
+        while True:
+            retry = input("Ingin input lagi? [Y/T] : ")
+            print()
+            if retry.lower() == 'y':
+                print("Dimengerti.")
+                print()
+                break
+
+            elif retry.lower() == 't':
+                print("Please Wait...")
+                exit()
+            
+            else:
+                print("Tidak Valid! Pilih Y/T!")
+                print()
+
+main()
