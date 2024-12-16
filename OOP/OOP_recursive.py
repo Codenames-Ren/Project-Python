@@ -20,6 +20,7 @@ class Player:
                 waktu = int(input("Lama Waktu bermain (satuan menit) : "))
                 item = int(input("Jumlah item yang didapatkan : "))
                 if waktu <= 1 and item >= 0:
+                    #Raise itu keyword buat bikin Error secara manual
                     raise ValueError("Waktu tidak boleh kurang dari 1")
                 print()
                 break
@@ -38,11 +39,12 @@ class Player:
         print (f"Nama Player                 : {self.nama}")
         print (f"Total Waktu Bermain         : {self.total_waktu} menit")
         print (f"Total Item yang didapat     : {self.total_item} item")
-        print (f"Level yang berhasil dicapai : {self.level_tertinggi}")
+        print (f"Level yang berhasil dicapai : Level {self.level_tertinggi}")
 
 def main():
     while True:
         print ("=====DATA PLAYER=====")
+        print()
         nama_player = input("Nama Player : ")
         #Error Handling juga 
         while True:
