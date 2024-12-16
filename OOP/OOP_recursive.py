@@ -14,6 +14,7 @@ class Player:
             return 
         
         print (f"Data Player di Level {level} : ")
+        #Looping sama Error Handling kalo user salah inputan
         while True:
             try:
                 waktu = int(input("Lama Waktu bermain (satuan menit) : "))
@@ -43,6 +44,7 @@ def main():
     while True:
         print ("=====DATA PLAYER=====")
         nama_player = input("Nama Player : ")
+        #Error Handling juga 
         while True:
             try:
                 level_tertinggi = int(input("Level saat ini : "))
@@ -54,12 +56,13 @@ def main():
                 print (f"Error: {e}, Gunakan angka untuk menginput level!")
                 print()
 
-        #bikin object Player
+        #bikin object Playernya
         player = Player(nama_player)
         player.level_tertinggi = level_tertinggi
         player.data_player(1)
         player.informasi_player()
 
+        #Looping lagi, yang ini buat ngulang program atau keluar 
         while True:
             retry = input("Ingin input lagi? [Y/T] : ")
             print()
