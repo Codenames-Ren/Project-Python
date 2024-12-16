@@ -22,11 +22,18 @@ def main():
 
         #Manual Input
         if pilihan == '1':
-            unit = input("Unit Number EVA (EX: EVA-XX) : ")
-            pilot = input("Nama Pilot EVA : ")
-            print()
-            list_eva.append(Evangelion(unit, pilot))
-
+            while True:
+                unit = input("Unit Number EVA (EX: EVA-XX) : ").strip()
+                pilot = input("Nama Pilot EVA : ").strip()
+                print()
+                if not unit or not pilot:
+                    print("Error: Unit dan Nama Pilot tidak boleh kosong!")
+                    print()
+                
+                else:
+                    list_eva.append(Evangelion(unit, pilot))
+                    break
+                
         elif pilihan == '2':
             while True:
                 try:
