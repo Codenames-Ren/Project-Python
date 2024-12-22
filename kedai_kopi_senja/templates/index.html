@@ -17,11 +17,13 @@
       <tr>
         <td>{{ item.name }}</td>
         <td>{{ item.price }}</td>
-        <form action="{{url_for('add_order') }}" method="post">
-          <input type="hidden" name="menu_id" value="{{ item.id }}" />
-          <input type="number" name="quantity" min="1" value="1" />
-          <button type="submit">Pesan</button>
-        </form>
+        <td>
+          <form action="{{ url_for('add_order') }}" method="post">
+            <input type="hidden" name="menu_id" value="{{ item.id }}" />
+            <input type="number" name="quantity" min="1" value="1" />
+            <button type="submit">Pesan</button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </table>
