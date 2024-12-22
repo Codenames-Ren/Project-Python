@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kedai Kopi Senja</title>
+  </head>
+  <body>
+    <h1>MENU</h1>
+    <table border="1">
+      <tr>
+        <th>Nama Menu</th>
+        <th>Harga</th>
+        <th>Pesan</th>
+      </tr>
+      {% for item in menu %}
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.price }}</td>
+        <form action="{{url_for('add_order') }}" method="post">
+          <input type="hidden" name="menu_id" value="{{ item.id }}" />
+          <input type="number" name="quantity" min="1" value="1" />
+          <button type="submit">Pesan</button>
+        </form>
+      </tr>
+      {% endfor %}
+    </table>
+    <a href="{{ url_for('view_orders') }}">Lihat Pesanan</a>
+  </body>
+</html>

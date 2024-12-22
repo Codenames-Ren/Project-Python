@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kedai Kopi Senja</title>
+  </head>
+  <body>
+    <h1>Daftar Pesanan</h1>
+    <table border="1">
+      <tr>
+        <th>Nama Menu</th>
+        <th>Jumlah</th>
+        <th>Total Harga</th>
+      </tr>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.menu_name }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>{{ order.totak_price }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <a href="{{ url_for('index') }}">Kembali ke Menu</a>
+    <a href="{{ url_for('clear_orders') }}">Batalkan Semua Pesanan</a>
+  </body>
+</html>
