@@ -15,9 +15,12 @@
       </tr>
       {% for order in orders %}
       <tr>
-        <td>{{ order.menu_name }}</td>
-        <td>{{ order.quantity }}</td>
-        <td>{{ order.total_price }}</td>
+        <!--Sebelumya order.menu_name-->
+        <td>{{ order[1] }}</td>
+        <!--Sebelumya order.quantity-->
+        <td>{{ order[2] }}</td>
+        <!--Sebelumya order.total_price-->
+        <td>{{ order[3] }}</td>
       </tr>
       {% endfor %}
     </table>
