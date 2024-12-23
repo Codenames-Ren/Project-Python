@@ -13,13 +13,27 @@ CREATE TABLE IF NOT EXISTS menu (
 )
 ''')
 
+#bikin table orders
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS orders (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+menu_name TEXT NOT NULL,
+quantity INTEGER NOT NULL,
+total_price INTEGER NOT NULL)
+''')
+
+#Hapus data lama kalo ada update dari databasenya biar gak duplikat
+cursor.execute('DELETE FROM menu')
+
 #nambah list menunya
 cursor.executemany('''
-INSERT INTO menu (name, prices) VALUES (?, ?)
+INSERT INTO menu (name, price) VALUES (?, ?)
 ''', [
     ("Espresso", 20000),
     ("Cappuccino", 25000),
-    ("Latte", 30000)
+    ("Latte", 30000),
+    ("Mocha", 35000),
+    ("Americano", 22000)
 ])
 
 #commit/nandain perubahan & nutup koneksi
