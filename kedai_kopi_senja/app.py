@@ -51,7 +51,10 @@ def add_order():
 def view_orders():
     #Ngambil pesanan dari database
     orders = query_db('SELECT * FROM orders')
-    return render_template('orders.html', orders=orders)
+
+    #hitung total harga kopi yang dipesan
+    total_price = sum(order[3] for order in orders)
+    return render_template('orders.html', orders=orders, total_price=total_price)
 
 @app.route('/clear_orders')
 def clear_orders():

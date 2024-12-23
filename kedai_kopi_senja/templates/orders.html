@@ -8,22 +8,28 @@
   <body>
     <h1>Daftar Pesanan</h1>
     <table border="1">
-      <tr>
-        <th>Nama Menu</th>
-        <th>Jumlah</th>
-        <th>Total Harga</th>
-      </tr>
-      {% for order in orders %}
-      <tr>
-        <!--Sebelumya order.menu_name-->
-        <td>{{ order[1] }}</td>
-        <!--Sebelumya order.quantity-->
-        <td>{{ order[2] }}</td>
-        <!--Sebelumya order.total_price-->
-        <td>{{ order[3] }}</td>
-      </tr>
-      {% endfor %}
+      <thead>
+        <tr>
+          <th>Nama Menu</th>
+          <th>Jumlah</th>
+          <th>Total Harga</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <!--Sebelumya order.menu_name-->
+          <td>{{ order[1] }}</td>
+          <!--Sebelumya order.quantity-->
+          <td>{{ order[2] }}</td>
+          <!--Sebelumya order.total_price-->
+          <td>{{ order[3] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
+    <hr />
+    <h3>Total Pesanan : {{ total_price }}</h3>
     <a href="{{ url_for('index') }}">Kembali ke Menu</a>
     <a href="{{ url_for('clear_orders') }}">Batalkan Semua Pesanan</a>
   </body>
