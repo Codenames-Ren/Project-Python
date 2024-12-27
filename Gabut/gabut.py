@@ -3,15 +3,16 @@ import time
 import math
 import numpy as np
 from ffpyplayer.player import MediaPlayer
+import cv2
 
 class VideoToCursesASCII_FFplayer:
-    def __init__(self, video_path, width=90, height=45, green_tresh=70, alpha=1.2, beta=20):
+    def __init__(self, video_path, width=480, height=360, green_tresh=70, alpha=1.2, beta=20):
         self.video_path = video_path
         self.width = width
         self.height = height
         self.green_base = (0, 255, 0)
         self.green_dist = green_tresh
-        self.patter = "OIA"
+        self.pattern = "Apple"
         self.alpha = alpha
         self.beta = beta
         self.player = None
@@ -34,7 +35,7 @@ class VideoToCursesASCII_FFplayer:
             
             except:
                 pass
-        self.player = MediaPlayer(self.video_path, ff_opts={'out_fmt': 'rgb24', 'sync': 'audio', 'paused': 'False'})
+        self.player = MediaPlayer(self.video_path, ff_opts={'out_fmt': 'rgb24', 'sync': 'audio', 'paused': False})
         while True:
             frame, val = self.player.get_frame()
             if frame is None:
@@ -45,7 +46,7 @@ class VideoToCursesASCII_FFplayer:
             img, pts = frame
             rgb_buffer = img.to_bytearray()[0]
             w,h = img.get_size()
-            import cv2
+            
             arr_rgb = np.frombuffer(rgb_buffer, dtype=np.uint8).reshape((h,w,3))
             arr_rgb = cv2.resize(arr_rgb, (self.width, self.height))
             arr_rgb = arr_rgb.astype(np.float32)
@@ -74,8 +75,8 @@ class VideoToCursesASCII_FFplayer:
                     except:
                         pass
                     continue
-                ascii_char = self.patter[x % pat_len]
-                color_idx =self.color_index_256(r, g, b)
+                ascii_char = self.pattern[x % pat_len]
+                color_idx =self._color_index_256(r, g, b)
                 color_pair = curses.color_pair(color_idx+1)
                 try:
                     stdscr.addstr(y, x, ascii_char, color_pair)
