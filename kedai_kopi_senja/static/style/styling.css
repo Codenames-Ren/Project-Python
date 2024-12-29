@@ -5,7 +5,7 @@
   font-family: "Poppins", sans-serif;
 }
 body {
-  background-image: url(./header-bg.png);
+  background-image: url(/static/style/header-bg.png);
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center;
@@ -67,6 +67,7 @@ body {
   background-color: #ffc400;
   color: whitesmoke;
 }
+
 .navbar img {
   width: 70px;
   height: 70px;

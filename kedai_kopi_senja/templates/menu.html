@@ -16,7 +16,10 @@
       src="https://kit.fontawesome.com/b67e368fa6.js"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./assets/style/style.css" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style/login.css') }}"
+    />
     <title>Kopi Senja - Menu</title>
   </head>
   <body>
@@ -68,6 +71,18 @@
     <footer>
       <p>Kopi Senja &#169; by Bayu Sukma -- Template by &#169 <i>Abdan Zam Zam R.</i></p>
     </footer>
-    <script src="./assets/script/script.js"></script>
+    <script>
+      let food = [
+        {% for item in menu %}
+        {
+          name: "{{ item[1] }}",
+          stok: {{ item[3] }},
+          harga: {{ item[2] }},
+          image: "{{ url_for('static', filename='images/' ~ item[4]) }}"
+        },
+        {% endfor %}
+      ];
+    </script>
+    <script src="/static/script/script.js"></script>
   </body>
 </html>

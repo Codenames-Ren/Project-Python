@@ -33,7 +33,7 @@ def login():
         password = request.form['password']
 
         #Ngecek apakah usernamenya valid dan ada di database atau nggak
-        user = query_db('SELECT * FROM users WHERE username = ? AND password = ?' [username, password], one=True)
+        user = query_db('SELECT * FROM users WHERE username = ? AND password = ?', (username, password), one=True)
         if user:
             session['username'] = user[1] #Nyimpen user di session pas login
             session['role'] = user[3] #Nyimpen rolenya di session pas login
@@ -60,8 +60,8 @@ def homepage():
 def menu():
     if 'username' not in session:
         return redirect(url_for('login'))
-    menu = query_db('SELECT * FROM menu')
-    return render_template('menu.html', menu=menu)
+    menu_data = query_db('SELECT * FROM menu')
+    return render_template('menu.html', menu=menu_data)
 
 #Route buat nampilin pesanan versi user
 @app.route('/orders')
@@ -71,6 +71,18 @@ def orders():
     orders = query_db('SELECT * FROM orders')
     total_price = sum(order[3] for order in orders)
     return render_template('orders.html', orders=orders, total_price=total_price)
+
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    data = request.get_json()
+    for item in data:
+        menu_name = item['name']
+        quantity = item['jumlah']
+        price = item['harga'] * quantity
+        query_db('INSERT INTO orders(menu_name, quantity, total_price) VALUES (?, ?, ?)', [menu_name, quantity, price])
+        return {"message": "Pesanan berhasil ditambahkan!"}
 
 #Route buat admin
 @app.route('/admin_page')
