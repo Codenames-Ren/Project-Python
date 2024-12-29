@@ -1,8 +1,41 @@
 //Pilihan Menu-->
 let totalHargaMakanan = 0;
+// let food = [
+//   {
+//     name: `Espresso`,
+//     stok: 6,
+//     harga: 20000,
+//     image: "./assets/images/Espresso.png",
+//   },
+//   {
+//     name: `Cappuccino`,
+//     stok: 5,
+//     harga: 25000,
+//     image: "./assets/images/kopi-cappuccino.jpg",
+//   },
+//   {
+//     name: `Latte`,
+//     stok: 12,
+//     harga: 30000,
+//     image: "./assets/images/Latte.jpg",
+//   },
+//   {
+//     name: `Mocha`,
+//     stok: 20,
+//     harga: 35000,
+//     image: "./assets/images/Mocha.jpg",
+//   },
+//   {
+//     name: `Americano`,
+//     stok: 25,
+//     harga: 16000,
+//     image: "./assets/images/Americano.png",
+//   },
+// ];
+
 let cart = [];
 
-let pembelian = [];
+// let pembelian = [];
 
 function debug() {
   console.log(pembelian);
