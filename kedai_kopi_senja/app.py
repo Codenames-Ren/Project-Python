@@ -81,8 +81,15 @@ def add_to_cart():
         menu_name = item['name']
         quantity = item['jumlah']
         price = item['harga'] * quantity
-        query_db('INSERT INTO orders(menu_name, quantity, total_price) VALUES (?, ?, ?)', [menu_name, quantity, price])
-        return {"message": "Pesanan berhasil ditambahkan!"}
+        
+        #atur stock buat menu
+        menu_item = query_db('SELECT stock FROM menu WHERE name = ?', [menu_name], one=True)
+        if menu_item and menu_item[0] >= quantity:
+            query_db('UPDATE menu SET stock = stock - ? WHERE name = ?', [quantity, menu_name])
+            query_db('INSERT INTO orders(menu_name, quantity, total_prices) VALUES (?, ?, ?)', [menu_name, quantity, price])
+        else:
+            return {"message": f"Stock {menu_name} tidak cukup!"}, 400
+        return {"Message": "Pesanan berhasil ditambahkan!"}
 
 #Route buat admin
 @app.route('/admin_page')
@@ -91,37 +98,13 @@ def admin_page():
         return redirect(url_for('login'))
     return render_template('admin_page.html')
 
-#Ngirim data ke Database pake Metode POST *Kalo GET buat ngambil
-# @app.route('/add_order', methods=['POST'])
-# def add_order():
-#     menu_id = int(request.form['menu_id'])
-#     quantity = int(request.form['quantity'])
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('404.html'), 404
 
-#     menu_item = query_db('SELECT name, price FROM menu WHERE id = ?', [menu_id], one=True)
-#     if menu_item:
-#         menu_name, price = menu_item
-#         total_price = price * quantity
-
-#         #Masukin pesanannya ke tabel orders
-#         query_db('INSERT INTO orders(menu_name, quantity, total_price) VALUES (?, ?, ?)',
-#                  [menu_name, quantity, total_price])
-
-#     return redirect(url_for('index'))
-
-# @app.route('/orders')
-# def view_orders():
-#     #Ngambil pesanan dari database
-#     orders = query_db('SELECT * FROM orders')
-
-#     #hitung total harga kopi yang dipesan
-#     total_price = sum(order[3] for order in orders)
-#     return render_template('orders.html', orders=orders, total_price=total_price)
-
-# @app.route('/clear_orders')
-# def clear_orders():
-#     #Ngehapus semua data pesanan yang masuk di tabel orders (alias batal mesen)
-#     query_db('DELETE FROM orders')
-#     return redirect(url_for('index'))
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('500.html'), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
