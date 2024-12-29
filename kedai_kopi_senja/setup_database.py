@@ -22,6 +22,16 @@ quantity INTEGER NOT NULL,
 total_price INTEGER NOT NULL)
 ''')
 
+#Bikin table users
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS users (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+username TEXT NOT NULL UNIQUE,
+password TEXT NOT NULL,
+role TEXT NOT NULL CHECK (role IN('admin', 'user'))
+)
+''')
+
 #Hapus data lama kalo ada update dari databasenya biar gak duplikat
 cursor.execute('DELETE FROM menu')
 
@@ -36,8 +46,19 @@ INSERT INTO menu (name, price) VALUES (?, ?)
     ("Americano", 22000)
 ])
 
+#Hapus data user yang sebelumnya kalo ada user yang ditambah (biar gak keduplikat)
+cursor.execute('DELETE FROM users')
+
+#Nambah username user biasa sama admin ke table users
+cursor.executemany('''
+INSERT INTO users (username, password, role) VALUES (?, ?, ?)
+''', [
+    ("admin", "admin123", "admin"), #Admin
+    ("user", "user123", "user") #User
+])
+
 #commit/nandain perubahan & nutup koneksi
 conn.commit()
 conn.close()
 
-print("Database Berhasil Dibuat!")
+print("Database Berhasil Diupdate!")
