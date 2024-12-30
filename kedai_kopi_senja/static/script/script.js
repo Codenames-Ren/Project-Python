@@ -7,70 +7,87 @@ function debug() {
   console.log(pembelian);
 }
 
-function checkAvailable() {
-  var available = true;
-  for (var i = 0; i < cart.length; i++) {
-    for (var j = 0; j < food.length; j++) {
-      if (cart[i].name === food[j].name) {
-        if (food[j].stok < cart[i].jumlah) {
-          available = false;
-          alert(`Stok ${food[j].name} tinggal ${food[j].stok}`);
-          break;
+// function checkAvailable() {
+//   let available = true;
+//   for (let i = 0; i < cart.length; i++) {
+//     const selectedItem = cart[i];
+//     const menu = food.find((item) => item.name === selectedItem.name);
+//     if (menu && menu.stok < selectedItem.jumlah) {
+//       alert(`Stok ${menu.name} tinggal ${menu.stok}`);
+//       available = false;
+//       break;
+//     }
+//   }
+//   return available;
+// }
+
+async function orderFood() {
+  if (checkAvailable()) {
+    try {
+      const updateStockPayload = cart.map((item) => ({
+        name: item.name,
+        jumlah: item.jumlah,
+      }));
+
+      console.log(
+        "Payload yang dikirim:",
+        JSON.stringify({ orders: updateStockPayload })
+      );
+
+      const response = await fetch("/api/update_stock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ orders: updateStockPayload }),
+      });
+
+      const result = await response.json();
+      console.log("Response dari server:", result);
+
+      if (result.message === "success") {
+        // Perbarui stok secara lokal
+        for (let item of cart) {
+          const menu = food.find((menuItem) => menuItem.name === item.name);
+          if (menu) {
+            menu.stok -= item.jumlah;
+          }
         }
+
+        alert(
+          `Pesanan telah diterima! Total Harga: Rp${toRupiah(
+            totalHargaMakanan
+          )},00`
+        );
+
+        pembelian.push([...cart]);
+        cart = [];
+        totalHargaMakanan = 0;
+
+        fetchMenu();
+        generateData();
+      } else {
+        console.error("Gagal memperbarui stok:", result.error);
+        alert("Gagal memperbarui stok: " + result.error);
       }
-    }
-    if (!available) {
-      break;
+    } catch (error) {
+      console.error("Terjadi kesalahan:", error);
+      alert("Terjadi kesalahan saat memproses pesanan.");
     }
   }
-
-  return available;
 }
 
-function orderFood() {
-  //   for (var i = 0; i < cart.length; i++) {
-  //     var notAvailable = false;
-  //     for (var j = 0; j < food.length; j++) {
-  //       if (cart[i].name === food[j].name) {
-  //         if (food[j].stok < cart[i].jumlah) {
-  //           notAvailable = true;
-  //           alert(`Stok ${food[j].name} tinggal ${food[j].stok}`);
-  //           break;
-  //         }
-  //         // if(!notAvailable){
-  //         //     food[j].stok -= cart[i].jumlah;
-  //         // }
-  //       }
-  //     }
-  //     if (notAvailable) {
-  //       break;
-  //     }
-  //   }
-  if (checkAvailable()) {
-    for (var x = 0; x < cart.length; x++) {
-      for (var y = 0; y < food.length; y++) {
-        if (cart[x].name === food[y].name) {
-          food[y].stok -= cart[x].jumlah;
-        }
-      }
+function checkAvailable() {
+  for (let item of cart) {
+    const menu = food.find((menuItem) => menuItem.name === item.name);
+    if (!menu || menu.stok < item.jumlah) {
+      alert(
+        `Stok ${menu ? menu.name : item.name} tinggal ${menu ? menu.stok : 0}`
+      );
+      return false;
     }
-    var cartList = document.getElementById("cartList");
-
-    // UNTUK MATIKAN CARTLIST
-    cartList.setAttribute("style", "display:none");
-    alert(
-      `Pesanan telah diterima, Mohon menunggu, Total Harga : Rp${toRupiah(
-        totalHargaMakanan
-      )},00`
-    );
-    cart.push(totalHargaMakanan);
-    pembelian.push(cart);
-    totalHargaMakanan = 0;
-    cart = [];
-    generateData();
   }
-  console.log(pembelian);
-  console.log(food);
+  return true;
 }
 
 function addtoCart(index) {
@@ -262,3 +279,4 @@ function generateData() {
   cartList.appendChild(divbutton);
 }
 generateData();
+fetchMenu();

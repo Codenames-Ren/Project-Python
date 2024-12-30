@@ -1,19 +1,10 @@
 #deklarasi import framework Flask sama SQLite
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import sqlite3
 
 
 app = Flask(__name__)
 app.secret_key = "Algoritma"
-
-#ini contoh awal pake list of dictionary
-# menu = [
-#     {"id" : 1, "name" : "Espresso", "price" : 20000},
-#     {"id" : 2, "name" : "Cappucino", "price" : 25000},
-#     {"id" : 3, "name" : "Latte", "price" : 30000},
-# ]
-
-# orders = []
 
 #function buat manggil databasenya
 def query_db(query, args=(), one=False):
@@ -98,13 +89,23 @@ def admin_page():
         return redirect(url_for('login'))
     return render_template('admin_page.html')
 
-@app.errorhandler(404)
-def not_found(error):
-    return render_template('404.html'), 404
+#API buat ngambil menu dari database
+@app.route('/api/menu', methods=['GET'])
+def api_get_menu():
+    menu = query_db('SELECT * FROM menu')
+    menu_list = [{"id": item[0], "name": item[1], "price": item[2], "stock": item[3], "image": item[4]} for item in menu]
+    return jsonify(menu_list)
 
-@app.errorhandler(500)
-def server_error(error):
-    return render_template('500.html'), 500
+@app.route('/api/update_stock', methods=['POST'])
+def api_update_stock():
+    data = request.json
+    try:
+        for item in data['cart']:
+            query_db('UPDATE menu SET stock = stock - ? WHERE name = ?', (item['jumlah'], item['name']))
+        return jsonify({"message": "Stock berhasil diperbarui!"})
+    except Exception:
+        return jsonify({"error": "Terjadi kesalahan saat memproses permintaan. Mohon coba lagi nanti!"}), 400
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
