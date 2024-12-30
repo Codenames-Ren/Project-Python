@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 import sqlite3
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.secret_key = "Algoritma"
 
 #function buat manggil databasenya
@@ -63,6 +63,22 @@ def orders():
     total_price = sum(order[3] for order in orders)
     return render_template('orders.html', orders=orders, total_price=total_price)
 
+# @app.route('/add_order', methods=['POST'])
+# def add_order():
+#     if 'username' not in session:
+#         return redirect(url_for('login'))
+#     menu_name = request.form['menu_name']
+#     quantity = int(request.form['quantity'])
+
+#     #Cek Stok cukup atau kurang
+#     menu_item = query_db('SELECT stock FROM menu WHERE name = ?', [menu_name], one=True)
+#     if menu_item and menu_item[0] >= quantity:
+#         query_db('UPDATE menu SET stock = stock - ? WHERE name = ?', [quantity, menu_name])
+#         query_db('INSERT INTO orders(menu_name, quantity, total_price) VALUES (?, ?, ?)', [menu_name, quantity, quantity * request.form['price']])
+#         return redirect(url_for('menu'))
+#     else:
+#         return render_template('menu.html', menu=query_db('SELECT * FROM menu'), error=f"Stok  {menu_name} tidak cukup!")
+
 @app.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
     if 'username' not in session:
@@ -89,13 +105,51 @@ def admin_page():
         return redirect(url_for('login'))
     return render_template('admin_page.html')
 
+# @app.route('/api/menu')
+# def menu():
+#     menu_items = [
+#         {
+#             "name": "Espresso",
+#             "price": 20000,
+#             "stock": 6,
+#             "image": "/static/images/espresso.png"
+#         },
+#         {
+#             "name": "Cappuccino",
+#             "price": 25000,
+#             "stock": 5,
+#             "image": "/static/images/espresso.jpg"
+#         },
+#         {
+#             "name": "Latte",
+#             "price": 30000,
+#             "stock": 12,
+#             "image": "/static/images/latte.jpg"
+
+#         },
+#         {
+#             "name": "Mocha",
+#             "price": 35000,
+#             "stock": 20,
+#             "image": "/static/images/latte.jpg"
+#         },
+#         {
+#             "name": "Americano",
+#             "price": 22000,
+#             "stock": 25,
+#             "image": "/static/images/americano.png"
+#         }
+#     ]
+#     return jsonify(menu_items)
+
 #API buat ngambil menu dari database
 @app.route('/api/menu', methods=['GET'])
 def api_get_menu():
     menu = query_db('SELECT * FROM menu')
     menu_list = [{"id": item[0], "name": item[1], "price": item[2], "stock": item[3], "image": item[4]} for item in menu]
-    return jsonify(menu_list)
+    return jsonify({"menu": menu_list})
 
+#API buat update stock
 @app.route('/api/update_stock', methods=['POST'])
 def api_update_stock():
     data = request.json

@@ -47,11 +47,11 @@ cursor.execute('DELETE FROM menu')
 cursor.executemany('''
 INSERT INTO menu (name, price, stock, image) VALUES (?, ?, ?, ?)
 ''', [
-    ("Espresso", 20000, 6, "espresso.png"),
-    ("Cappuccino", 25000, 5, "cappuccino.jpg"),
-    ("Latte", 30000, 12, "latte.jpg"),
-    ("Mocha", 35000, 20, "mocha.jpg"),
-    ("Americano", 22000, 25, "americano.png")
+    ("Espresso", 20000, 6, "/static/images/espresso.png"),
+    ("Cappuccino", 25000, 5, "/static/images/cappuccino.jpg"),
+    ("Latte", 30000, 12, "/static/images/latte.jpg"),
+    ("Mocha", 35000, 20, "/static/images/mocha.jpg"),
+    ("Americano", 22000, 25, "/static/images/americano.png")
 ])
 
 #Hapus data user yang sebelumnya kalo ada user yang ditambah (biar gak keduplikat)

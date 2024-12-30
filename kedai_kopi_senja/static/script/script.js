@@ -2,6 +2,8 @@
 let totalHargaMakanan = 0;
 let cart = [];
 let pembelian = [];
+let food = [];
+// const imagePath = "/static/images/${menuItem.image}";
 
 function debug() {
   console.log(pembelian);
@@ -29,7 +31,8 @@ async function orderFood() {
       });
 
       const result = await response.json();
-      console.log("Response dari server:", result);
+      console.log("Response dari API:", result);
+      console.log("Data menu setelah di fetch:", food);
 
       if (result.message === "success") {
         // Perbarui stok secara lokal
@@ -53,7 +56,8 @@ async function orderFood() {
         fetchMenu();
         generateData();
       } else {
-        console.error("Gagal memperbarui stok:", result.error);
+        console.log("Gagal memperbarui stok:", response.data.stok); // Tambahkan logging
+        // console.error("Gagal memperbarui stok:", result.error);
         alert("Gagal memperbarui stok: " + result.error);
       }
     } catch (error) {
@@ -163,126 +167,136 @@ function toRupiah(harga) {
 // Ini fungsi terakhir di dalam script.js Anda
 async function fetchMenu() {
   try {
-    const response = await fetch("/api/get_menu"); // Sesuaikan endpoint dengan backend Anda
-    const result = await response.json();
+    const response = await fetch("/api/menu");
+    const rawData = await response.json();
 
-    if (result.menu) {
-      food = result.menu; // Update variabel food hanya jika API berhasil
-      console.log("Menu berhasil diambil:", food);
-      generateData(); // Perbarui tampilan
-    } else {
-      throw new Error("Format respons tidak sesuai");
+    console.log("Data mentah dari API:", rawData);
+
+    if (!rawData.menu || !Array.isArray(rawData.menu)) {
+      throw new TypeError(
+        "Data menu yang diterima tidak valid atau bukan array."
+      );
     }
+
+    food = rawData.menu; // Akses array menu
+    console.log("Data menu yang diakses:", food);
+    generateData();
   } catch (error) {
-    console.error("Error saat mengambil data menu:", error);
-    alert("Gagal mengambil menu. Silakan coba lagi nanti.");
+    console.error("Gagal mengambil menu:", error);
+    alert("Kesalahan: " + error.message);
   }
 }
 
 //console.log(toRupiah(1910450));
 
 function generateData() {
+  console.log("Memulai generate data...");
+  console.log("Isi food sebelum generate:", food);
+
   const foodList = document.getElementById("foodList");
   const cartList = document.getElementById("cartList");
+
   foodList.innerHTML = "";
   cartList.innerHTML = "";
 
-  for (var i = 0; i < food.length; i++) {
-    let name = food[i].name;
-    let stok = food[i].stok;
-    let harga = food[i].harga;
-    let image = food[i].image;
+  food.forEach((item, index) => {
+    console.log(`Mengolah item ke-${index}:`, item);
 
+    // Buat card makanan
     let divCard = document.createElement("div");
     divCard.classList.add("card");
 
     let imageData = document.createElement("img");
-    imageData.setAttribute("src", image);
+    imageData.setAttribute("src", item.image);
     divCard.appendChild(imageData);
 
     let title = document.createElement("p");
-    title.innerHTML = name;
+    title.innerHTML = item.name;
     divCard.appendChild(title);
 
     let divAction = document.createElement("div");
     divAction.classList.add("action");
 
     let spanData = document.createElement("span");
-    spanData.innerHTML = `Rp ${toRupiah(harga)},00 | Stok : ${stok}`;
+    spanData.innerHTML = `Rp ${toRupiah(item.price)},00 | Stok : ${item.stock}`;
     divAction.appendChild(spanData);
 
     let buttonAdd = document.createElement("button");
     buttonAdd.innerHTML = '<i class="fas fa-cart-plus"></i> Pesan';
-    buttonAdd.setAttribute("value", i);
+    buttonAdd.setAttribute("value", index);
     buttonAdd.setAttribute("onclick", "addtoCart(this.value)");
     divAction.appendChild(buttonAdd);
     divCard.appendChild(divAction);
-    //console.log(divCard);
+
     foodList.appendChild(divCard);
-  }
 
-  let totalDiv = document.createElement("div");
-  totalDiv.classList.add("total");
+    console.log(`Card item ke-${index} berhasil dibuat.`);
+  });
 
-  let totalh1 = document.createElement("h1");
-  totalh1.innerHTML = `TOTAL : Rp${toRupiah(totalHargaMakanan)},00`;
-  totalDiv.appendChild(totalh1);
-
-  let totalhr = document.createElement("hr");
-  totalDiv.appendChild(totalhr);
-  //console.log(totalDiv);
-  cartList.appendChild(totalDiv);
-
-  //console.log('BelumMasuk');
-  for (var x = 0; x < cart.length; x++) {
-    let name = cart[x].name;
-    let jumlah = cart[x].jumlah;
-    let harga = cart[x].harga;
-    let image = cart[x].image;
-    //console.log('MASUK');
-    let divCardx = document.createElement("div");
-    divCardx.classList.add("card-order");
-    //console.log(divCardx);
-
-    let divCardDetail = document.createElement("div");
-    divCardDetail.classList.add("detail");
-
-    let imageData = document.createElement("img");
-    imageData.setAttribute("src", image);
-    divCardDetail.appendChild(imageData);
-
-    let foodName = document.createElement("p");
-    // foodName.setAttribute('id','nameCart')
-    foodName.innerHTML = name;
-    divCardDetail.appendChild(foodName);
-
-    let foodJumlah = document.createElement("span");
-    foodJumlah.innerHTML = jumlah;
-    divCardDetail.appendChild(foodJumlah);
-
-    divCardx.appendChild(divCardDetail);
-
-    let buttonCancel = document.createElement("button");
-    buttonCancel.setAttribute("value", x);
-    buttonCancel.setAttribute("id", "cancelCart");
-    buttonCancel.setAttribute("onclick", "removeFood(this.value)");
-    buttonCancel.innerHTML = '<i class="fas fa-trash"></i> Hapus';
-    divCardx.appendChild(buttonCancel);
-    //console.log(divCardx);
-
-    cartList.appendChild(divCardx);
-  }
-
-  let divbutton = document.createElement("div");
-  divbutton.classList.add("card-finish");
-
-  let buttonOrder = document.createElement("button");
-  //buttonOrder.classList.add('order');
-  buttonOrder.setAttribute("onclick", "orderFood()");
-  buttonOrder.innerHTML = "ORDER SEKARANG";
-  divbutton.appendChild(buttonOrder);
-  cartList.appendChild(divbutton);
+  console.log("Generate data selesai.");
 }
+
+let totalDiv = document.createElement("div");
+totalDiv.classList.add("total");
+
+let totalh1 = document.createElement("h1");
+totalh1.innerHTML = `TOTAL : Rp${toRupiah(totalHargaMakanan)},00`;
+totalDiv.appendChild(totalh1);
+
+let totalhr = document.createElement("hr");
+totalDiv.appendChild(totalhr);
+//console.log(totalDiv);
+cartList.appendChild(totalDiv);
+
+//console.log('BelumMasuk');
+for (var x = 0; x < cart.length; x++) {
+  let name = cart[x].name;
+  let jumlah = cart[x].jumlah;
+  let harga = cart[x].harga;
+  let image = cart[x].image;
+  //console.log('MASUK');
+  let divCardx = document.createElement("div");
+  divCardx.classList.add("card-order");
+  //console.log(divCardx);
+
+  let divCardDetail = document.createElement("div");
+  divCardDetail.classList.add("detail");
+
+  let imageData = document.createElement("img");
+  imageData.setAttribute("src", image);
+  divCardDetail.appendChild(imageData);
+
+  let foodName = document.createElement("p");
+  // foodName.setAttribute('id','nameCart')
+  foodName.innerHTML = name;
+  divCardDetail.appendChild(foodName);
+
+  let foodJumlah = document.createElement("span");
+  foodJumlah.innerHTML = jumlah;
+  divCardDetail.appendChild(foodJumlah);
+
+  divCardx.appendChild(divCardDetail);
+
+  let buttonCancel = document.createElement("button");
+  buttonCancel.setAttribute("value", x);
+  buttonCancel.setAttribute("id", "cancelCart");
+  buttonCancel.setAttribute("onclick", "removeFood(this.value)");
+  buttonCancel.innerHTML = '<i class="fas fa-trash"></i> Hapus';
+  divCardx.appendChild(buttonCancel);
+  //console.log(divCardx);
+
+  cartList.appendChild(divCardx);
+}
+
+let divbutton = document.createElement("div");
+divbutton.classList.add("card-finish");
+
+let buttonOrder = document.createElement("button");
+//buttonOrder.classList.add('order');
+buttonOrder.setAttribute("onclick", "orderFood()");
+buttonOrder.innerHTML = "ORDER SEKARANG";
+divbutton.appendChild(buttonOrder);
+cartList.appendChild(divbutton);
 
 generateData();
 fetchMenu();
