@@ -80,7 +80,7 @@ def add_to_cart():
             query_db('INSERT INTO orders(menu_name, quantity, total_prices) VALUES (?, ?, ?)', [menu_name, quantity, price])
         else:
             return {"message": f"Stock {menu_name} tidak cukup!"}, 400
-        return {"Message": "Pesanan berhasil ditambahkan!"}
+    return {"Message": "Pesanan berhasil ditambahkan!"}
 
 #Route buat admin
 @app.route('/admin_page')
@@ -99,11 +99,13 @@ def api_get_menu():
 @app.route('/api/update_stock', methods=['POST'])
 def api_update_stock():
     data = request.json
+    print(data)
     try:
         for item in data['cart']:
             query_db('UPDATE menu SET stock = stock - ? WHERE name = ?', (item['jumlah'], item['name']))
         return jsonify({"message": "Stock berhasil diperbarui!"})
-    except Exception:
+    except Exception as e:
+        print(f"Error: {e}")
         return jsonify({"error": "Terjadi kesalahan saat memproses permintaan. Mohon coba lagi nanti!"}), 400
     
 

@@ -7,20 +7,6 @@ function debug() {
   console.log(pembelian);
 }
 
-// function checkAvailable() {
-//   let available = true;
-//   for (let i = 0; i < cart.length; i++) {
-//     const selectedItem = cart[i];
-//     const menu = food.find((item) => item.name === selectedItem.name);
-//     if (menu && menu.stok < selectedItem.jumlah) {
-//       alert(`Stok ${menu.name} tinggal ${menu.stok}`);
-//       available = false;
-//       break;
-//     }
-//   }
-//   return available;
-// }
-
 async function orderFood() {
   if (checkAvailable()) {
     try {
@@ -39,7 +25,7 @@ async function orderFood() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ orders: updateStockPayload }),
+        body: JSON.stringify({ cart: updateStockPayload }),
       });
 
       const result = await response.json();
@@ -174,6 +160,25 @@ function toRupiah(harga) {
   return result;
 }
 
+// Ini fungsi terakhir di dalam script.js Anda
+async function fetchMenu() {
+  try {
+    const response = await fetch("/api/get_menu"); // Sesuaikan endpoint dengan backend Anda
+    const result = await response.json();
+
+    if (result.menu) {
+      food = result.menu; // Update variabel food hanya jika API berhasil
+      console.log("Menu berhasil diambil:", food);
+      generateData(); // Perbarui tampilan
+    } else {
+      throw new Error("Format respons tidak sesuai");
+    }
+  } catch (error) {
+    console.error("Error saat mengambil data menu:", error);
+    alert("Gagal mengambil menu. Silakan coba lagi nanti.");
+  }
+}
+
 //console.log(toRupiah(1910450));
 
 function generateData() {
@@ -278,5 +283,6 @@ function generateData() {
   divbutton.appendChild(buttonOrder);
   cartList.appendChild(divbutton);
 }
+
 generateData();
 fetchMenu();
