@@ -2,8 +2,17 @@
 let totalHargaMakanan = 0;
 let cart = [];
 let pembelian = [];
+
 let food = [];
-// const imagePath = "/static/images/${menuItem.image}";
+
+// Fetch data menu dari server
+fetch("/api/menu")
+  .then((response) => response.json())
+  .then((data) => {
+    food = data.menu; // Simpan data menu ke variabel food
+    console.log("Data menu:", food);
+  })
+  .catch((error) => console.error("Error fetching menu data:", error));
 
 function debug() {
   console.log(pembelian);
@@ -34,7 +43,7 @@ async function orderFood() {
       console.log("Response dari API:", result);
       console.log("Data menu setelah di fetch:", food);
 
-      if (result.message === "success") {
+      if (result.message === "Success") {
         // Perbarui stok secara lokal
         for (let item of cart) {
           const menu = food.find((menuItem) => menuItem.name === item.name);
@@ -53,12 +62,15 @@ async function orderFood() {
         cart = [];
         totalHargaMakanan = 0;
 
+        const cartlist = document.getElementById("cartList");
+        cartlist.setAttribute("style", "display:none");
+
         fetchMenu();
         generateData();
       } else {
-        console.log("Gagal memperbarui stok:", response.data.stok); // Tambahkan logging
+        console.log("Gagal memperbarui stok:", result); // Tambahkan logging
         // console.error("Gagal memperbarui stok:", result.error);
-        alert("Gagal memperbarui stok: " + result.error);
+        alert("Gagal memperbarui stok: " + (result.error || "Unknown Error"));
       }
     } catch (error) {
       console.error("Terjadi kesalahan:", error);
@@ -82,37 +94,30 @@ function checkAvailable() {
 
 function addtoCart(index) {
   console.log(food[index].name);
-  var hasExist = false;
-  var hasEmpty = false;
-  if (food[index].stok <= 0) {
+
+  if (food[index].stock <= 0) {
     alert(`${food[index].name} habis, silahkan pesan menu lainnya`);
-    hasEmpty = true;
+    return;
   }
-  for (var i = 0; i < cart.length; i++) {
-    if (food[index].name === cart[i].name) {
-      if (food[index].stok - cart[i].jumlah <= 0) {
-        alert(`${food[index].name} habis, silahkan pesan menu lainnya`);
-        hasEmpty = true;
-        break;
-      } else {
-        totalHargaMakanan += cart[i].harga;
-        //console.log(totalHargaMakanan);
-        cart[i].jumlah++;
-        hasExist = true;
-        break;
-      }
+
+  const existingItem = cart.find((item) => item.name === food[index].name);
+  if (existingItem) {
+    if (food[index].stock - existingItem.jumlah <= 0) {
+      alert(`${food[index].name} habis, silahkan pesan menu lainnya`);
+      return;
     }
-  }
-  if (!hasExist && !hasEmpty) {
-    let obj = {
+    existingItem.jumlah++;
+    totalHargaMakanan += existingItem.harga; // Menggunakan "harga" dari cart
+  } else {
+    cart.push({
       name: food[index].name,
-      harga: food[index].harga,
+      harga: food[index].price, // Pastikan ini sesuai dengan field API
       jumlah: 1,
       image: food[index].image,
-    };
-    totalHargaMakanan += food[index].harga;
-    cart.push(obj);
+    });
+    totalHargaMakanan += food[index].price;
   }
+
   generateData();
   var cartlist = document.getElementById("cartList");
   if (cart.length !== 0) {
@@ -192,6 +197,20 @@ async function fetchMenu() {
 function generateData() {
   console.log("Memulai generate data...");
   console.log("Isi food sebelum generate:", food);
+  // console.log("Isi cart sebelum generate:", cart);
+  console.log("Isi cart untuk perhitungan:", cart);
+  cart.forEach((item) => {
+    if (isNaN(item.harga) || isNaN(item.jumlah)) {
+      console.error("Item tidak valid:", item);
+    }
+  });
+
+  // Hitung ulang total harga
+  totalHargaMakanan = cart.reduce(
+    (total, item) => total + item.harga * item.jumlah,
+    0
+  );
+  console.log("Total harga dihitung ulang:", totalHargaMakanan);
 
   const foodList = document.getElementById("foodList");
   const cartList = document.getElementById("cartList");
@@ -200,8 +219,6 @@ function generateData() {
   cartList.innerHTML = "";
 
   food.forEach((item, index) => {
-    console.log(`Mengolah item ke-${index}:`, item);
-
     // Buat card makanan
     let divCard = document.createElement("div");
     divCard.classList.add("card");
@@ -229,12 +246,9 @@ function generateData() {
     divCard.appendChild(divAction);
 
     foodList.appendChild(divCard);
-
-    console.log(`Card item ke-${index} berhasil dibuat.`);
   });
 
-  console.log("Generate data selesai.");
-
+  // Buat elemen total harga
   let totalDiv = document.createElement("div");
   totalDiv.classList.add("total");
 
@@ -244,53 +258,42 @@ function generateData() {
 
   let totalhr = document.createElement("hr");
   totalDiv.appendChild(totalhr);
-  //console.log(totalDiv);
   cartList.appendChild(totalDiv);
 
-  //console.log('BelumMasuk');
-  for (var x = 0; x < cart.length; x++) {
-    let name = cart[x].name;
-    let jumlah = cart[x].jumlah;
-    let harga = cart[x].harga;
-    let image = cart[x].image;
-    //console.log('MASUK');
+  cart.forEach((item, index) => {
     let divCardx = document.createElement("div");
     divCardx.classList.add("card-order");
-    //console.log(divCardx);
 
     let divCardDetail = document.createElement("div");
     divCardDetail.classList.add("detail");
 
     let imageData = document.createElement("img");
-    imageData.setAttribute("src", image);
+    imageData.setAttribute("src", item.image);
     divCardDetail.appendChild(imageData);
 
     let foodName = document.createElement("p");
-    // foodName.setAttribute('id','nameCart')
-    foodName.innerHTML = name;
+    foodName.innerHTML = item.name;
     divCardDetail.appendChild(foodName);
 
     let foodJumlah = document.createElement("span");
-    foodJumlah.innerHTML = jumlah;
+    foodJumlah.innerHTML = item.jumlah;
     divCardDetail.appendChild(foodJumlah);
 
     divCardx.appendChild(divCardDetail);
 
     let buttonCancel = document.createElement("button");
-    buttonCancel.setAttribute("value", x);
-    buttonCancel.setAttribute("id", "cancelCart");
+    buttonCancel.setAttribute("value", index);
     buttonCancel.setAttribute("onclick", "removeFood(this.value)");
     buttonCancel.innerHTML = '<i class="fas fa-trash"></i> Hapus';
     divCardx.appendChild(buttonCancel);
-    //console.log(divCardx);
 
     cartList.appendChild(divCardx);
-  }
+  });
+
   let divbutton = document.createElement("div");
   divbutton.classList.add("card-finish");
 
   let buttonOrder = document.createElement("button");
-  //buttonOrder.classList.add('order');
   buttonOrder.setAttribute("onclick", "orderFood()");
   buttonOrder.innerHTML = "ORDER SEKARANG";
   divbutton.appendChild(buttonOrder);

@@ -14,21 +14,25 @@
       src="https://kit.fontawesome.com/b67e368fa6.js"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./assets/style/style.css" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style/style.css') }}"
+    />
     <title>Kopi Senja - About</title>
   </head>
   <body>
     <div class="navbar">
         <h3>Kopi&nbsp;<span>Senja.</span></h3>
       <ul>
-        <li><a href="./homepage.html">Home</a></li>
-        <li><a href="./menu.html">Daftar Makanan</a></li>
-        <li><a href="./about.html">Tentang Kami</a></li>
+        <li><a href="{{ url_for('homepage' )}}">Home</a></li>
+        <li><a href="{{ url_for('menu') }}">Daftar Makanan</a></li>
+        <li><a href="{{ url_for('about') }}">Tentang Kami</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
       </ul>
     </div>
     <div class="about">
         <div class="gambar">
-            <img src="./assets/images/logo.png" alt="logo" />
+            <img src="/static/images/logo.png" alt="logo" />
             <p>
                 Kedai Kopi Senja adalah Project yang dibuat untuk memenuhi tugas akhir mata kuliah Algoritma dan Pemrograman.
                 <br>Website ini menggunakan sistem CRUD untuk bekerja dan diharapkan dapat memenuhi ketentuan tugas akhir. <br>
@@ -42,7 +46,7 @@
       <h3 class="pengembang">Pengembang:</h3>
       <div class="team">
         <div class="person">
-          <img src="./assets/images/me.jpg" alt="me"/>
+          <img src="/static/images/me.jpg" alt="me"/>
           <p>Bayu Sukma</p>
           <span>Mahasiswa Global Institute</span>
         </div>

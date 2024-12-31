@@ -175,3 +175,12 @@ body {
     bottom: 100%;
   }
 }
+
+.login-box form .error-message {
+  color: #ff3333;
+  text-align: center;
+  padding: 5px;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-family: "Poppins", sans-serif;
+}

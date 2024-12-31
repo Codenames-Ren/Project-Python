@@ -46,13 +46,19 @@ def homepage():
         return redirect(url_for('login'))
     return render_template('homepage.html', username=session['username'], role=session['role'])
 
-#route untuk fitur tambahan di menu
+#route untuk menu
 @app.route('/menu')
 def menu():
     if 'username' not in session:
         return redirect(url_for('login'))
     menu_data = query_db('SELECT * FROM menu')
     return render_template('menu.html', menu=menu_data)
+
+@app.route('/about')
+def about():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('about.html', username=session['username'], role=session['role'])
 
 #Route buat nampilin pesanan versi user
 @app.route('/orders')
@@ -105,43 +111,6 @@ def admin_page():
         return redirect(url_for('login'))
     return render_template('admin_page.html')
 
-# @app.route('/api/menu')
-# def menu():
-#     menu_items = [
-#         {
-#             "name": "Espresso",
-#             "price": 20000,
-#             "stock": 6,
-#             "image": "/static/images/espresso.png"
-#         },
-#         {
-#             "name": "Cappuccino",
-#             "price": 25000,
-#             "stock": 5,
-#             "image": "/static/images/espresso.jpg"
-#         },
-#         {
-#             "name": "Latte",
-#             "price": 30000,
-#             "stock": 12,
-#             "image": "/static/images/latte.jpg"
-
-#         },
-#         {
-#             "name": "Mocha",
-#             "price": 35000,
-#             "stock": 20,
-#             "image": "/static/images/latte.jpg"
-#         },
-#         {
-#             "name": "Americano",
-#             "price": 22000,
-#             "stock": 25,
-#             "image": "/static/images/americano.png"
-#         }
-#     ]
-#     return jsonify(menu_items)
-
 #API buat ngambil menu dari database
 @app.route('/api/menu', methods=['GET'])
 def api_get_menu():
@@ -157,7 +126,7 @@ def api_update_stock():
     try:
         for item in data['cart']:
             query_db('UPDATE menu SET stock = stock - ? WHERE name = ?', (item['jumlah'], item['name']))
-        return jsonify({"message": "Stock berhasil diperbarui!"})
+        return jsonify({"message": "Success"}), 200
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": "Terjadi kesalahan saat memproses permintaan. Mohon coba lagi nanti!"}), 400
