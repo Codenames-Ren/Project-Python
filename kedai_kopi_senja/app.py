@@ -51,8 +51,21 @@ def homepage():
 def menu():
     if 'username' not in session:
         return redirect(url_for('login'))
+    
+    elif session['role'] == 'admin':
+        return redirect(url_for('admin_menu'))
+    
     menu_data = query_db('SELECT * FROM menu')
     return render_template('menu.html', menu=menu_data)
+
+#Route buat admin
+@app.route('/admin_menu')
+def admin_menu():
+    if 'username' not in session or session['role'] != 'admin':
+        return redirect(url_for('login'))
+    
+    menu_data = query_db('SELECT * FROM menu')
+    return render_template('admin_menu.html', menu=menu_data)
 
 @app.route('/about')
 def about():
@@ -103,13 +116,6 @@ def add_to_cart():
         else:
             return {"message": f"Stock {menu_name} tidak cukup!"}, 400
     return {"Message": "Pesanan berhasil ditambahkan!"}
-
-#Route buat admin
-@app.route('/admin_page')
-def admin_page():
-    if 'username' not in session or session['role'] != 'admin':
-        return redirect(url_for('login'))
-    return render_template('admin_page.html')
 
 #API buat ngambil menu dari database
 @app.route('/api/menu', methods=['GET'])

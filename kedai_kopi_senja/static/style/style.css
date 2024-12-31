@@ -113,6 +113,85 @@ body {
   display: none;
 }
 
+#stockUpdate {
+  position: relative;
+}
+
+#stockUpdate h2 {
+  font-family: "Poppins", sans-serif;
+  color: white;
+  font-size: 25px;
+}
+
+#stockUpdate p {
+  font-family: "Poppins", sans-serif;
+  color: white;
+  font-size: 20px;
+  padding-bottom: 10px;
+}
+
+#stockUpdate button:not(.close-btn) {
+  cursor: pointer;
+  position: relative;
+  border: none;
+  text-align: center;
+  width: 90%;
+  height: 50px;
+  margin: 10px 10px 10px 15px;
+  background-color: rgb(247, 143, 7);
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  -webkit-box-shadow: 9px 9px 18px -13px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 9px 9px 18px -13px rgba(0, 0, 0, 0.75);
+  box-shadow: 9px 9px 18px -13px rgba(0, 0, 0, 0.75);
+}
+
+#stockUpdate button:not(.close-btn):hover {
+  background-color: rgb(211, 120, 0);
+}
+
+#stockUpdate .close-btn {
+  display: inline-block;
+  background: none; /* Hapus background */
+  border: none; /* Hapus border */
+  box-shadow: none; /* Hapus shadow */
+  color: white;
+  font-size: 40px; /* Ukuran ikon */
+  cursor: pointer;
+  position: absolute; /* Agar menempel di sudut kanan atas */
+  top: 10px; /* Jarak dari atas */
+  right: 10px; /* Jarak dari kanan */
+  padding: 10px; /* Hapus padding default */
+  line-height: 1; /* Hilangkan ruang tambahan */
+}
+
+#stockUpdate .close-btn:hover {
+  color: #ffc400;
+  background: none;
+}
+
+#newStock {
+  background: white;
+  border-radius: 10px;
+  box-shadow: #4e4e4e;
+  padding: 10px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+  margin-left: 55px;
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+  -moz-appearance: textfield;
+}
+
+#newStock::-webkit-inner-spin-button,
+#newStock::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .card-order {
   width: 91%;
   height: 50px;
