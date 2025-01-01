@@ -40,6 +40,7 @@ async function updateStock(name, newStock) {
     if (result.message === "Success") {
       alert(`Stok berhasil diperbarui!`);
       fetchMenu(); // Refresh data menu
+      closeSidebar();
     } else {
       console.error("Gagal memperbarui stok:", result.error);
       alert("Gagal memperbarui stok: " + (result.error || "Unknown Error"));
@@ -120,12 +121,12 @@ function showStockEditor(name, currentStock) {
 
   stockUpdate.innerHTML = `
   <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h2>Kelola Stock: ${name}</h2>
+    <h2>Kelola Stock : ${name}</h2>
     <button onClick="closeSidebar()" class="close-btn">&times;</button>
     </div>
-    <p>Stok saat ini: ${currentStock}</p>
-    <input type="number" id="newStock" placeholder="Jumlah stok baru" />
-    <button onclick="submitStock('${name}')">Update Stok</button>
+    <p>Stock saat ini : ${currentStock}</p>
+    <input type="number" id="newStock" placeholder="Jumlah stock baru" />
+    <button onclick="submitStock('${name}')">Update Stock</button>
   `;
 
   stockUpdate.style.display = "block";
@@ -141,7 +142,7 @@ function closeSidebar() {
 function submitStock(name) {
   const newStock = parseInt(document.getElementById("newStock").value);
   if (isNaN(newStock)) {
-    alert("Masukkan jumlah stok yang valid!");
+    alert("Masukkan jumlah stock yang valid!");
     return;
   }
 

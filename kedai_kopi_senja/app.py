@@ -82,22 +82,6 @@ def orders():
     total_price = sum(order[3] for order in orders)
     return render_template('orders.html', orders=orders, total_price=total_price)
 
-# @app.route('/add_order', methods=['POST'])
-# def add_order():
-#     if 'username' not in session:
-#         return redirect(url_for('login'))
-#     menu_name = request.form['menu_name']
-#     quantity = int(request.form['quantity'])
-
-#     #Cek Stok cukup atau kurang
-#     menu_item = query_db('SELECT stock FROM menu WHERE name = ?', [menu_name], one=True)
-#     if menu_item and menu_item[0] >= quantity:
-#         query_db('UPDATE menu SET stock = stock - ? WHERE name = ?', [quantity, menu_name])
-#         query_db('INSERT INTO orders(menu_name, quantity, total_price) VALUES (?, ?, ?)', [menu_name, quantity, quantity * request.form['price']])
-#         return redirect(url_for('menu'))
-#     else:
-#         return render_template('menu.html', menu=query_db('SELECT * FROM menu'), error=f"Stok  {menu_name} tidak cukup!")
-
 @app.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
     if 'username' not in session:

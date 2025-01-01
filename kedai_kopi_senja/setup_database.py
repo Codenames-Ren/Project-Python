@@ -64,7 +64,7 @@ INSERT INTO users (username, password, role) VALUES (?, ?, ?)
     ("admin", "admin123", "admin"), #Admin
     ("user", "user123", "user"), #User
     ("ren", "ren11", "user"), #User2
-    ("bayu", "bayu11", "user") #User3
+    ("bayu", "bayu11", "admin") #Admin2
 ])
 
 #commit/nandain perubahan & nutup koneksi
