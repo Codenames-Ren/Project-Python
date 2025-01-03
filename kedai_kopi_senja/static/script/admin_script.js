@@ -14,8 +14,8 @@ async function fetchMenu() {
       );
     }
 
-    food = rawData.menu; // Simpan data menu ke variabel food
-    generateData(); // Tampilkan data
+    food = rawData.menu;
+    generateData();
   } catch (error) {
     console.error("Error di fetchMenu:", error.message);
     alert("Gagal memuat data menu. Periksa koneksi atau server");
@@ -84,7 +84,7 @@ function generateData() {
     divAction.classList.add("action");
 
     let spanData = document.createElement("span");
-    spanData.innerHTML = `Rp ${toRupiah(item.price)},00 | Stok : ${item.stock}`;
+    spanData.innerHTML = `Stok : ${item.stock}`;
     divAction.appendChild(spanData);
 
     let buttonEdit = document.createElement("button");
@@ -149,27 +149,25 @@ function submitStock(name) {
   updateStock(name, newStock);
 }
 
-// Fungsi format ke Rupiah
-function toRupiah(harga) {
-  var result = "";
-  harga = String(harga);
-  var arr = [];
-  var count = 0;
-  for (var i = harga.length - 1; i >= 0; i--) {
-    if (count === 3 && harga[i] != undefined) {
-      arr.push(".");
-      arr.push(harga[i]);
-      count = 1;
-    } else {
-      arr.push(harga[i]);
-      count++;
-    }
-  }
-  for (var i = arr.length - 1; i >= 0; i--) {
-    result += arr[i];
-  }
-  return result;
-}
+// function toRupiah(harga) {
+//   var result = "";
+//   harga = String(harga);
+//   var arr = [];
+//   var count = 0;
+//   for (var i = harga.length - 1; i >= 0; i--) {
+//     if (count === 3 && harga[i] != undefined) {
+//       arr.push(".");
+//       arr.push(harga[i]);
+//       count = 1;
+//     } else {
+//       arr.push(harga[i]);
+//       count++;
+//     }
+//   }
+//   for (var i = arr.length - 1; i >= 0; i--) {
+//     result += arr[i];
+//   }
+//   return result;
+// }
 
-// Load menu saat halaman dimuat
 fetchMenu();

@@ -5,7 +5,7 @@ let pembelian = [];
 
 let food = [];
 
-// Fetch data menu dari server
+// Fetch data menu dari server (API)
 fetch("/api/menu")
   .then((response) => response.json())
   .then((data) => {
@@ -44,7 +44,6 @@ async function orderFood() {
       console.log("Data menu setelah di fetch:", food);
 
       if (result.message === "Success") {
-        // Perbarui stok secara lokal
         for (let item of cart) {
           const menu = food.find((menuItem) => menuItem.name === item.name);
           if (menu) {
@@ -53,9 +52,9 @@ async function orderFood() {
         }
 
         alert(
-          `Pesanan telah diterima! Total Harga: Rp${toRupiah(
+          `Pesanan telah diterima! Total Harga: Rp. ${toRupiah(
             totalHargaMakanan
-          )},00`
+          )}`
         );
 
         pembelian.push([...cart]);
@@ -68,8 +67,7 @@ async function orderFood() {
         fetchMenu();
         generateData();
       } else {
-        console.log("Gagal memperbarui stok:", result); // Tambahkan logging
-        // console.error("Gagal memperbarui stok:", result.error);
+        console.log("Gagal memperbarui stok:", result);
         alert("Gagal memperbarui stok: " + (result.error || "Unknown Error"));
       }
     } catch (error) {
@@ -107,11 +105,11 @@ function addtoCart(index) {
       return;
     }
     existingItem.jumlah++;
-    totalHargaMakanan += existingItem.harga; // Menggunakan "harga" dari cart
+    totalHargaMakanan += existingItem.harga;
   } else {
     cart.push({
       name: food[index].name,
-      harga: food[index].price, // Pastikan ini sesuai dengan field API
+      harga: food[index].price,
       jumlah: 1,
       image: food[index].image,
     });
@@ -126,7 +124,6 @@ function addtoCart(index) {
 }
 
 function removeFood(value) {
-  //console.log(cart[value].jumlah);
   if (cart[value].jumlah > 0) {
     totalHargaMakanan -= cart[value].harga;
     cart[value].jumlah--;
@@ -155,21 +152,18 @@ function toRupiah(harga) {
       arr.push(".");
       arr.push(harga[i]);
       count = 1;
-      // console.log(count,i,'MASUK');
     } else {
       arr.push(harga[i]);
       count++;
-      //console.log(count,i-1);
     }
   }
-  //console.log(arr);
   for (var i = arr.length - 1; i >= 0; i--) {
     result += arr[i];
   }
   return result;
 }
 
-// Ini fungsi terakhir di dalam script.js Anda
+//Nyambung ke API
 async function fetchMenu() {
   try {
     const response = await fetch("/api/menu");
@@ -191,8 +185,6 @@ async function fetchMenu() {
     alert("Kesalahan: " + error.message);
   }
 }
-
-//console.log(toRupiah(1910450));
 
 function generateData() {
   console.log("Memulai generate data...");
@@ -235,7 +227,7 @@ function generateData() {
     divAction.classList.add("action");
 
     let spanData = document.createElement("span");
-    spanData.innerHTML = `Rp ${toRupiah(item.price)},00 | Stok : ${item.stock}`;
+    spanData.innerHTML = `Rp. ${toRupiah(item.price)} | Stok : ${item.stock}`;
     divAction.appendChild(spanData);
 
     let buttonAdd = document.createElement("button");
@@ -253,7 +245,7 @@ function generateData() {
   totalDiv.classList.add("total");
 
   let totalh1 = document.createElement("h1");
-  totalh1.innerHTML = `TOTAL : Rp${toRupiah(totalHargaMakanan)},00`;
+  totalh1.innerHTML = `TOTAL : Rp. ${toRupiah(totalHargaMakanan)}`;
   totalDiv.appendChild(totalh1);
 
   let totalhr = document.createElement("hr");

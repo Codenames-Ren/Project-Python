@@ -25,11 +25,6 @@ body {
   margin: 20px;
   cursor: pointer;
   transition: all 0.3 ease;
-  /* padding: 20px 10px 20px 23px; */
-  /* background-color: white; */
-  /* -webkit-box-shadow: 3px 10px 25px -19px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 3px 10px 25px -19px rgba(0, 0, 0, 0.75);
-  box-shadow: 3px 10px 25px -19px rgba(0, 0, 0, 0.75); */
 }
 
 .navbar h3 {
@@ -55,7 +50,6 @@ body {
   font-weight: 500;
   font-style: normal;
   padding-right: 20px;
-  /* background-color: white; */
 }
 .navbar ul li a {
   text-decoration: none;
@@ -78,7 +72,6 @@ body {
   align-content: center;
 }
 .main {
-  /* display: flex; */
   position: relative;
   justify-content: center;
   display: flex;
@@ -90,15 +83,10 @@ body {
   );
 }
 .content {
-  /* background-color: #e3e9ff; */
   width: 70%;
-  /* height: 1000px; */
-  /* display: flex; */
   text-align: justify;
-  /* padding-top: 50px; */
   padding: 15px 15px 15px 15px;
   margin: 0;
-  /* margin-left: 25px; */
 }
 
 .sidebar {
@@ -106,14 +94,11 @@ body {
   width: 30%;
   height: 90vh;
   padding: 17px 10px 10px 10px;
-  /* display: flex; */
-  /* border: 1px solid black; */
-  /* display: inline-block; */
-  /* margin-left: -4px; */
   flex-direction: column;
   display: none;
 }
 
+/* #stockUpdate itu styling buat admin menu */
 #stockUpdate {
   position: relative;
 }
@@ -155,17 +140,17 @@ body {
 
 #stockUpdate .close-btn {
   display: inline-block;
-  background: none; /* Hapus background */
-  border: none; /* Hapus border */
-  box-shadow: none; /* Hapus shadow */
+  background: none;
+  border: none;
+  box-shadow: none;
   color: white;
-  font-size: 40px; /* Ukuran ikon */
+  font-size: 40px;
   cursor: pointer;
-  position: absolute; /* Agar menempel di sudut kanan atas */
-  top: 10px; /* Jarak dari atas */
-  right: 10px; /* Jarak dari kanan */
-  padding: 10px; /* Hapus padding default */
-  line-height: 1; /* Hilangkan ruang tambahan */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px;
+  line-height: 1;
 }
 
 #stockUpdate .close-btn:hover {
@@ -181,9 +166,6 @@ body {
   margin-bottom: 30px;
   margin-top: 30px;
   margin-left: 55px;
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
   -moz-appearance: textfield;
 }
 
@@ -193,6 +175,7 @@ body {
   margin: 0;
 }
 
+/* Styling buat menu sama admin menu (card bordernya) */
 .card-order {
   width: 91%;
   height: 50px;
@@ -201,7 +184,6 @@ body {
   display: flex;
   text-align: center;
   border-radius: 10px;
-  /* justify-content: stretch; */
   -webkit-box-shadow: 9px 9px 18px -13px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 9px 9px 18px -13px rgba(0, 0, 0, 0.75);
   box-shadow: 9px 9px 18px -13px rgba(0, 0, 0, 0.75);
@@ -342,11 +324,10 @@ body {
   display: flex;
 }
 
+/* Styling halaman about */
 .about {
-  /* margin-top: 20px; */
   width: 100%;
   display: inline-block;
-  /* justify-content: center; */
   text-align: center;
   background: linear-gradient(
     180deg,
@@ -400,13 +381,10 @@ body {
 }
 
 .person {
-  /* margin-top: 20px; */
   margin-right: 10px;
   margin-left: 10px;
   width: 200px;
-  /* height: 200px; */
   padding: 15px;
-  /* border: 1px solid black; */
   color: white;
   text-decoration: solid;
   text-shadow: #b8b8b8;
@@ -431,4 +409,57 @@ footer {
   background-color: rgb(51, 51, 51);
   text-align: center;
   font-weight: bold;
+}
+
+/* Media query buat layar 1280px */
+@media (max-width: 1280px) {
+  html,
+  body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .main {
+    flex: 1;
+  }
+
+  .footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  .navbar ul li {
+    margin-left: 30px;
+    font-size: 18px;
+  }
+
+  .navbar h3 {
+    font-size: 36px;
+  }
+
+  .card {
+    width: 250px;
+    margin: 10px;
+  }
+
+  .card span {
+    font-size: 16px;
+  }
+
+  .content {
+    width: 85%;
+  }
+
+  .sidebar {
+    width: 35%;
+  }
+
+  #stockUpdate .close-btn {
+    font-size: 25px;
+    top: 10px;
+    right: 10px;
+  }
 }
