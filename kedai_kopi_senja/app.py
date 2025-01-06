@@ -82,6 +82,32 @@ def orders():
     total_price = sum(order[3] for order in orders)
     return render_template('orders.html', orders=orders, total_price=total_price)
 
+@app.route('/api/add_order', methods=['POST'])
+def api_add_order():
+    if 'username' not in session:
+        return jsonify({"error": "Unautorized"}), 401
+    
+    data = request.json
+    print("Data yang diterima : ", data)
+
+    try:
+        for item in data['cart']:
+            menu_name = item['name']
+            jumlah = item['jumlah']
+            harga = item['harga']
+            total_price = jumlah * harga
+            username = session['username']
+
+            print(f"Menu name : {menu_name}, Jumlah : {jumlah}, Harga : {harga}")
+            query_db('UPDATE menu SET stock = stock - ? WHERE name = ?', [jumlah, menu_name])
+            query_db('INSERT INTO orders(menu_name, quantity, total_price, username) VALUES (?, ?, ?, ?)', [menu_name, jumlah, total_price, username])
+            print(f"Username : {username}, Total Price : {total_price}")
+            
+        return jsonify({"message": "Pesanan berhasil ditambahkan!"}), 200
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error:" "Gagal mencatat pesanan. Mohon Coba lagi."}), 400
+
 @app.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
     if 'username' not in session:

@@ -21,61 +21,107 @@ function debug() {
 async function orderFood() {
   if (checkAvailable()) {
     try {
-      const updateStockPayload = cart.map((item) => ({
+      const ordersPayload = cart.map((item) => ({
         name: item.name,
         jumlah: item.jumlah,
+        harga: item.harga,
       }));
 
       console.log(
-        "Payload yang dikirim:",
-        JSON.stringify({ orders: updateStockPayload })
+        "Payload yang dikirim :",
+        JSON.stringify({ cart: ordersPayload })
       );
-
-      const response = await fetch("/api/update_stock", {
+      const response = await fetch("/api/add_order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ cart: updateStockPayload }),
+        body: JSON.stringify({ cart: ordersPayload }),
       });
 
       const result = await response.json();
-      console.log("Response dari API:", result);
-      console.log("Data menu setelah di fetch:", food);
-
-      if (result.message === "Success") {
-        for (let item of cart) {
-          const menu = food.find((menuItem) => menuItem.name === item.name);
-          if (menu) {
-            menu.stok -= item.jumlah;
-          }
-        }
-
+      console.log("Response dari API : ", result);
+      if (result.message === "Pesanan berhasil ditambahkan!") {
         alert(
-          `Pesanan telah diterima! Total Harga: Rp. ${toRupiah(
-            totalHargaMakanan
-          )}`
+          "Pesanan berhasil! Total harga Rp. " + toRupiah(totalHargaMakanan)
         );
-
-        pembelian.push([...cart]);
         cart = [];
         totalHargaMakanan = 0;
+        fetchMenu();
+        generateData();
 
         const cartlist = document.getElementById("cartList");
         cartlist.setAttribute("style", "display:none");
-
-        fetchMenu();
-        generateData();
       } else {
-        console.log("Gagal memperbarui stok:", result);
-        alert("Gagal memperbarui stok: " + (result.error || "Unknown Error"));
+        alert(
+          "Gagal menambahkan pesanan : " + (result.error || "Unknown Error")
+        );
       }
     } catch (error) {
-      console.error("Terjadi kesalahan:", error);
-      alert("Terjadi kesalahan saat memproses pesanan.");
+      console.error("Terjadi kesalahan : ", error);
+      alert("Gagal memproses pesanan. Coba lagi nanti.");
     }
   }
 }
+
+// async function orderFood() {
+//   if (checkAvailable()) {
+//     try {
+//       const updateStockPayload = cart.map((item) => ({
+//         name: item.name,
+//         jumlah: item.jumlah,
+//       }));
+
+//       console.log(
+//         "Payload yang dikirim:",
+//         JSON.stringify({ orders: updateStockPayload })
+//       );
+
+//       const response = await fetch("/api/update_stock", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ cart: updateStockPayload }),
+//       });
+
+//       const result = await response.json();
+//       console.log("Response dari API:", result);
+//       console.log("Data menu setelah di fetch:", food);
+
+//       if (result.message === "Success") {
+//         for (let item of cart) {
+//           const menu = food.find((menuItem) => menuItem.name === item.name);
+//           if (menu) {
+//             menu.stok -= item.jumlah;
+//           }
+//         }
+
+//         alert(
+//           `Pesanan telah diterima! Total Harga: Rp. ${toRupiah(
+//             totalHargaMakanan
+//           )}`
+//         );
+
+//         pembelian.push([...cart]);
+//         cart = [];
+//         totalHargaMakanan = 0;
+
+//         const cartlist = document.getElementById("cartList");
+//         cartlist.setAttribute("style", "display:none");
+
+//         fetchMenu();
+//         generateData();
+//       } else {
+//         console.log("Gagal memperbarui stok:", result);
+//         alert("Gagal memperbarui stok: " + (result.error || "Unknown Error"));
+//       }
+//     } catch (error) {
+//       console.error("Terjadi kesalahan:", error);
+//       alert("Terjadi kesalahan saat memproses pesanan.");
+//     }
+//   }
+// }
 
 function checkAvailable() {
   for (let item of cart) {
