@@ -64,65 +64,6 @@ async function orderFood() {
   }
 }
 
-// async function orderFood() {
-//   if (checkAvailable()) {
-//     try {
-//       const updateStockPayload = cart.map((item) => ({
-//         name: item.name,
-//         jumlah: item.jumlah,
-//       }));
-
-//       console.log(
-//         "Payload yang dikirim:",
-//         JSON.stringify({ orders: updateStockPayload })
-//       );
-
-//       const response = await fetch("/api/update_stock", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ cart: updateStockPayload }),
-//       });
-
-//       const result = await response.json();
-//       console.log("Response dari API:", result);
-//       console.log("Data menu setelah di fetch:", food);
-
-//       if (result.message === "Success") {
-//         for (let item of cart) {
-//           const menu = food.find((menuItem) => menuItem.name === item.name);
-//           if (menu) {
-//             menu.stok -= item.jumlah;
-//           }
-//         }
-
-//         alert(
-//           `Pesanan telah diterima! Total Harga: Rp. ${toRupiah(
-//             totalHargaMakanan
-//           )}`
-//         );
-
-//         pembelian.push([...cart]);
-//         cart = [];
-//         totalHargaMakanan = 0;
-
-//         const cartlist = document.getElementById("cartList");
-//         cartlist.setAttribute("style", "display:none");
-
-//         fetchMenu();
-//         generateData();
-//       } else {
-//         console.log("Gagal memperbarui stok:", result);
-//         alert("Gagal memperbarui stok: " + (result.error || "Unknown Error"));
-//       }
-//     } catch (error) {
-//       console.error("Terjadi kesalahan:", error);
-//       alert("Terjadi kesalahan saat memproses pesanan.");
-//     }
-//   }
-// }
-
 function checkAvailable() {
   for (let item of cart) {
     const menu = food.find((menuItem) => menuItem.name === item.name);
@@ -182,8 +123,8 @@ function removeFood(value) {
   if (cart.length !== 0) {
     cartlist.setAttribute("style", "display:inline-block");
   } else {
+    
     // UNTUK MATIKAN CARTLIST
-
     cartlist.setAttribute("style", "display:none");
   }
 }
@@ -223,7 +164,7 @@ async function fetchMenu() {
       );
     }
 
-    food = rawData.menu; // Akses array menu
+    food = rawData.menu;
     console.log("Data menu yang diakses:", food);
     generateData();
   } catch (error) {
