@@ -418,10 +418,13 @@ footer {
     height: 100%;
     display: flex;
     flex-direction: column;
+    margin: 0;
   }
 
   .main {
     flex: 1;
+    overflow-y: auto;
+    padding-bottom: 100px;
   }
 
   .footer {
@@ -429,6 +432,7 @@ footer {
     bottom: 0;
     width: 100%;
     padding: 10px 0;
+    margin-top: auto;
   }
 
   .navbar ul li {
@@ -451,6 +455,10 @@ footer {
 
   .content {
     width: 85%;
+  }
+
+  .action span {
+    font-size: 13px;
   }
 
   .sidebar {

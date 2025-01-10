@@ -22,7 +22,7 @@ body {
 }
 
 .login-box {
-  height: 350px;
+  height: 440px;
   width: 400px;
   padding: 40px;
   background: rgba(0, 0, 0, 0.7);
@@ -75,6 +75,7 @@ body {
 }
 
 .login-box form button {
+  width: 330px;
   border: none;
   display: inline-block;
   position: relative;
@@ -88,6 +89,7 @@ body {
   overflow: hidden;
   transition: 0.5s;
   letter-spacing: 4px;
+  top: 7px;
 }
 
 .login-box form button:hover {
@@ -95,6 +97,41 @@ body {
   color: #fff;
   border-radius: 5px;
   box-shadow: 0 0 100px #ffc400;
+}
+
+.btn-reg {
+  width: 330px;
+  bottom: 7px;
+}
+
+.p-reg {
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+  text-align: center;
+  color: #fff;
+  margin-top: 25px;
+}
+
+.p-reg a {
+  text-decoration: none;
+  color: #ffc400;
+}
+
+.p-reg a:hover {
+  color: #ff3333;
+  transition: 0.5s ease-in-out;
+}
+
+#register button {
+  top: 15px;
+}
+
+#register p {
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+  font-size: 14px;
+  margin-top: 20px;
 }
 
 .login-box button span {

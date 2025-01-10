@@ -18,7 +18,7 @@ class DatabaseSetup:
         #hapus tabel lama kalo ada perubahan (matiin aja method ini kalo datanya gak mau diganti)
         self.cursor.execute('DROP TABLE IF EXISTS menu')
         self.cursor.execute('DROP TABLE IF EXISTS orders')
-        # self.cursor.execute('DROP TABLE IF EXISTS users')
+        self.cursor.execute('DROP TABLE IF EXISTS users')
 
     def create_table(self):
         #Bikin tabel baru di database
@@ -56,8 +56,8 @@ class DatabaseSetup:
             ("Latte", 20000, 12, "/static/images/latte.jpg"),
             ("Mocha", 30000, 20, "/static/images/mocha.jpg"),
             ("Americano", 22000, 25, "/static/images/americano.png"),
-            ("Macchiato", 35000, 15, "/static/images/macchiato.jpg")
-            # ("Doppio", 28000, 10, "/static/images/doppio.jpg")
+            ("Macchiato", 35000, 15, "/static/images/macchiato.jpg"),
+            ("Doppio", 28000, 10, "/static/images/doppio.jpg")
         ]
 
         for name, price, stock, image, in menu_data:

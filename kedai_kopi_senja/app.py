@@ -1,35 +1,92 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import sqlite3
+import hashlib
 
 class Database:
     def __init__(self, db_name='database.db'):
         self.db_name = db_name
+        self.init_db()
+    
+    def init_db(self):
+        create_table_query = ''' CREATE TABLE IF NOT EXISTS users (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'user'
+        )
+        '''
+        self.query(create_table_query)
 
     def query(self, query, args=(), one=False):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute(query, args)
-        rv = cursor.fetchall()
-        conn.commit()
-        conn.close()
-        return (rv[0] if rv else None) if one else rv
+        try:
+            conn = sqlite3.connect(self.db_name)
+            cursor = conn.cursor()
+            print(f"Query yang di eksekusi : {query}")
+            print(f"Dengan Argument : {args}")
+
+            if isinstance(args,(list, tuple)):
+                cursor.execute(query, args)
+            else:
+                cursor.execute(query, (args,))
+
+            if query.strip().upper().startswith('SELECT'):
+                rv = cursor.fetchall()
+            else:
+                rv = []
+                conn.commit()  # Commit untuk INSERT, UPDATE, DELETE
+
+            conn.close()
+            return (rv[0] if rv else None) if one else rv
+        
+        except Exception as e:
+            print(f"Database Error : {str(e)}")
+            print(f"Query : {query}")
+            print(f"Argument : {args}")
+            conn.close()
+            raise e
+
 
 class Auth:
     def __init__(self, db):
         self.db = db
     
     def login(self, username, password):
-        user = self.db.query('SELECT * FROM users WHERE username = ? AND password = ?', 
-                            (username, password), one=True)
-        if user:
-            return {'username': user[1], 'role': user[3]}
-        return None
+        try:
+            user = self.db.query('SELECT * FROM users WHERE username = ?', 
+                                (username), one=True)
+            if user:
+                input_password_hash = hashlib.sha256(password.encode()).hexdigest()
+                if input_password_hash == user[2]:
+                    return {'username': user[1], 'role': user[3]}
+            return None
+        
+        except Exception as e:
+            print(f"Login Error : {str(e)}")
+            return None
 
     def check_auth(self):
         return 'username' in session
 
     def check_admin(self):
         return self.check_auth() and session.get('role') == 'admin'
+    
+    def register(self, username, password, role='user'):
+        if not username or not password:
+            return {'error': 'Username dan password harus diisi!'}
+        
+        try:
+            existing_user = self.db.query('SELECT * FROM users WHERE username = ?', (username,), one=True)
+        
+            if existing_user:
+                return {"error": 'Username sudah terdaftar!'}
+        
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+            self.db.query('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', (username, hashed_password, role))
+            return {'success': True, 'username': username, 'role': role}
+        
+        except Exception as e:
+            print (f"error': 'Gagal mendaftarkan user: {str(e)}")
+            return {"error': 'Gagal mendaftarkan user: {str(e)}"}
 
 class MenuManager:
     def __init__(self, db):
@@ -90,6 +147,7 @@ class FlaskApp:
         self.order = OrderManager(self.db)
         
     def init_routes(self):
+        self.app.add_url_rule('/register', 'register', self.register, methods=['GET', 'POST'])
         self.app.add_url_rule('/login', 'login', self.login, methods=['GET', 'POST'])
         self.app.add_url_rule('/logout', 'logout', self.logout)
         self.app.add_url_rule('/', 'homepage', self.homepage)
@@ -102,6 +160,25 @@ class FlaskApp:
         self.app.add_url_rule('/api/add_order', 'api_add_order', self.api_add_order, methods=['POST'])
         self.app.add_url_rule('/add_to_cart', 'add_to_cart', self.add_to_cart, methods=['POST'])
         self.app.add_url_rule('/api/update_stock', 'api_update_stock', self.api_update_stock, methods=['POST'])
+    
+    def register(self):
+        if request.method == 'POST':
+            username = request.form['username']
+            password = request.form['password']
+            confirm_password = request.form['confirm_password']
+
+            if password != confirm_password:
+                return render_template('register.html', error='Password dan Konfirmasi password tidak sama!')
+            
+            result = self.auth.register(username, password)
+
+            if 'error' in result:
+                return render_template('register.html', error=result['error'])
+            
+            print(f"Registration successful for user: {username}")
+            return redirect(url_for('login'))
+        
+        return render_template('register.html')
     
     def login(self):
         if request.method == 'POST':
