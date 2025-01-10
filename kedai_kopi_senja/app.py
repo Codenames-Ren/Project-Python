@@ -113,8 +113,7 @@ class OrderManager:
     def __init__(self, db):
         self.db = db
     
-    def add_order(self, menu_name, quantity, price, username):
-        total_price = quantity * price
+    def add_order(self, menu_name, quantity, total_price, username):
         self.db.query('INSERT INTO orders(menu_name, quantity, total_price, username) VALUES (?, ?, ?, ?)', 
                      [menu_name, quantity, total_price, username])
         
@@ -123,11 +122,12 @@ class OrderManager:
             for item in cart_data:
                 menu_name = item['name']
                 quantity = item['jumlah']
-                price = item['harga'] * quantity
+                price = item['harga']
+                total_price = price * quantity
                 
                 self.db.query('UPDATE menu SET stock = stock - ? WHERE name = ?', 
                              [quantity, menu_name])
-                self.add_order(menu_name, quantity, price, username)
+                self.add_order(menu_name, quantity, total_price, username)
             return {"message": "Pesanan berhasil ditambahkan!"}, 200
         except Exception as e:
             print(f"Error: {e}")
